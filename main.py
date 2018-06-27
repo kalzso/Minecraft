@@ -20,7 +20,7 @@ WALKING_SPEED = 5
 FLYING_SPEED = 15
 
 GRAVITY = 20.0
-MAX_JUMP_HEIGHT = 1.0 # About the height of a block.
+MAX_JUMP_HEIGHT = 1.0  # About the height of a block.
 # To derive the formula for calculating jump speed, first solve
 #    v_t = v_0 + a * t
 # for the time at which you achieve maximum height, where a is the acceleration
@@ -36,17 +36,19 @@ PLAYER_HEIGHT = 2
 if sys.version_info[0] >= 3:
     xrange = range
 
+
 def cube_vertices(x, y, z, n):
     """ Return the vertices of the cube at position x, y, z with size 2*n.
 
     """
+
     return [
-        x-n,y+n,z-n, x-n,y+n,z+n, x+n,y+n,z+n, x+n,y+n,z-n,  # top
-        x-n,y-n,z-n, x+n,y-n,z-n, x+n,y-n,z+n, x-n,y-n,z+n,  # bottom
-        x-n,y-n,z-n, x-n,y-n,z+n, x-n,y+n,z+n, x-n,y+n,z-n,  # left
-        x+n,y-n,z+n, x+n,y-n,z-n, x+n,y+n,z-n, x+n,y+n,z+n,  # right
-        x-n,y-n,z+n, x+n,y-n,z+n, x+n,y+n,z+n, x-n,y+n,z+n,  # front
-        x+n,y-n,z-n, x-n,y-n,z-n, x-n,y+n,z-n, x+n,y+n,z-n,  # back
+        x-n, y+n, z-n, x-n, y+n, z+n, x+n, y+n, z+n, x+n, y+n, z-n,  # top
+        x-n, y-n, z-n, x+n, y-n, z-n, x+n, y-n, z+n, x-n, y-n, z+n,  # bottom
+        x-n, y-n, z-n, x-n, y-n, z+n, x-n, y+n, z+n, x-n, y+n, z-n,  # left
+        x+n, y-n, z+n, x+n, y-n, z-n, x+n, y+n, z-n, x+n, y+n, z+n,  # right
+        x-n, y-n, z+n, x+n, y-n, z+n, x+n, y+n, z+n, x-n, y+n, z+n,  # front
+        x+n, y-n, z-n, x-n, y-n, z-n, x-n, y+n, z-n, x+n, y+n, z-n,  # back
     ]
 
 
@@ -327,8 +329,8 @@ class Model(object):
         # create vertex list
         # FIXME Maybe `add_indexed()` should be used instead
         self._shown[position] = self.batch.add(24, GL_QUADS, self.group,
-            ('v3f/static', vertex_data),
-            ('t2f/static', texture_data))
+                                               ('v3f/static', vertex_data),
+                                               ('t2f/static', texture_data))
 
     def hide_block(self, position, immediate=True):
         """ Hide the block at the given `position`. Hiding does not remove the
@@ -458,8 +460,9 @@ class Window(pyglet.window.Window):
         # plane) measured from the z-axis down. The second is the rotation
         # angle from the ground plane up. Rotation is in degrees.
         #
-        # The vertical plane rotation ranges from -90 (looking straight down) to
-        # 90 (looking straight up). The horizontal rotation range is unbounded.
+        # The vertical plane rotation ranges from -90 (looking straight down)
+        # to 90 (looking straight up).
+        # The horizontal rotation range is unbounded.
         self.rotation = (0, 0)
 
         # Which sector the player is currently in.
@@ -487,8 +490,9 @@ class Window(pyglet.window.Window):
 
         # The label that is displayed in the top left of the canvas.
         self.label = pyglet.text.Label('', font_name='Arial', font_size=18,
-            x=10, y=self.height - 10, anchor_x='left', anchor_y='top',
-            color=(0, 0, 0, 255))
+                                       x=10, y=self.height - 10,
+                                       anchor_x='left', anchor_y='top',
+                                       color=(0, 0, 0, 255))
 
         # This call schedules the `update()` method to be called
         # TICKS_PER_SEC. This is the main game event loop.
@@ -508,12 +512,12 @@ class Window(pyglet.window.Window):
 
         """
         x, y = self.rotation
-        # y ranges from -90 to 90, or -pi/2 to pi/2, so m ranges from 0 to 1 and
-        # is 1 when looking ahead parallel to the ground and 0 when looking
-        # straight up or down.
+        # y ranges from -90 to 90, or -pi/2 to pi/2, so m ranges from 0 to 1
+        # and is 1 when looking ahead parallel to the ground
+        # and 0 when looking straight up or down.
         m = math.cos(math.radians(y))
-        # dy ranges from -1 to 1 and is -1 when looking straight down and 1 when
-        # looking straight up.
+        # dy ranges from -1 to 1 and is -1 when looking straight down
+        # and 1 when looking straight up.
         dy = math.sin(math.radians(y))
         dx = math.cos(math.radians(x - 90)) * m
         dz = math.sin(math.radians(x - 90)) * m
@@ -592,15 +596,15 @@ class Window(pyglet.window.Window):
         """
         # walking
         speed = FLYING_SPEED if self.flying else WALKING_SPEED
-        d = dt * speed # distance covered this tick.
+        d = dt * speed  # distance covered this tick.
         dx, dy, dz = self.get_motion_vector()
         # New position in space, before accounting for gravity.
         dx, dy, dz = dx * d, dy * d, dz * d
         # gravity
         if not self.flying:
-            # Update your vertical speed: if you are falling, speed up until you
-            # hit terminal velocity; if you are jumping, slow down until you
-            # start falling.
+            # Update your vertical speed: if you are falling,
+            # speed up until you hit terminal velocity;
+            # if you are jumping, slow down until you start falling.
             self.dy -= dt * GRAVITY
             self.dy = max(self.dy, -TERMINAL_VELOCITY)
             dy += self.dy * dt
@@ -769,9 +773,16 @@ class Window(pyglet.window.Window):
             self.reticle.delete()
         x, y = self.width // 2, self.height // 2
         n = 10
-        self.reticle = pyglet.graphics.vertex_list(4,
-            ('v2i', (x - n, y, x + n, y, x, y - n, x, y + n))
-        )
+        self.reticle = pyglet.graphics.vertex_list(4, ('v2i',
+                                                       (x - n,
+                                                        y,
+                                                        x + n,
+                                                        y,
+                                                        x,
+                                                        y - n,
+                                                        x,
+                                                        y + n)
+                                                       ))
 
     def set_2d(self):
         """ Configure OpenGL to draw in 2d.
@@ -875,14 +886,14 @@ def setup():
     """
     # Set the color of "clear", i.e. the sky, in rgba.
     glClearColor(0.5, 0.69, 1.0, 1)
-    # Enable culling (not rendering) of back-facing facets -- facets that aren't
-    # visible to you.
+    # Enable culling (not rendering) of back-facing facets
+    # -- facets that aren't visible to you.
     glEnable(GL_CULL_FACE)
-    # Set the texture minification/magnification function to GL_NEAREST (nearest
-    # in Manhattan distance) to the specified texture coordinates. GL_NEAREST
-    # "is generally faster than GL_LINEAR, but it can produce textured images
-    # with sharper edges because the transition between texture elements is not
-    # as smooth."
+    # Set the texture minification/magnification function to GL_NEAREST
+    # (nearest in Manhattan distance) to the specified texture coordinates.
+    # GL_NEAREST "is generally faster than GL_LINEAR, but it can produce
+    # textured images with sharper edges because the transition between
+    # texture elements is not as smooth."
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
     setup_fog()
